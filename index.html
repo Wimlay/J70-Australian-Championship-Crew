@@ -94,20 +94,33 @@
       <th>Crew 2</th>
       <th>Crew 3</th>
     </tr>
-    <tr>
-      <td>Example Boat</td>
-      <td>AUS 123</td>
-      <td>John Smith</td>
-      <td>Jane Doe</td>
-      <td>Tom Roe</td>
-      <td>Sarah Lee</td>
-    </tr>
-    <!-- Duplicate table rows for more boats -->
+    <!-- Table rows will be populated dynamically -->
   </table>
 
   <footer>
     © Regatta Crew List
   </footer>
+
+  <script>
+    async function loadCrewData() {
+      const response = await fetch('boats.json'); // Make sure boats.json is in the same folder
+      const boats = await response.json();
+
+      const table = document.querySelector('table');
+
+      boats.forEach(boat => {
+        const row = document.createElement('tr');
+        ['boatName','sailNumber','skipper','crew1','crew2','crew3'].forEach(field => {
+          const td = document.createElement('td');
+          td.textContent = boat[field] || '';
+          row.appendChild(td);
+        });
+        table.appendChild(row);
+      });
+    }
+
+    loadCrewData();
+  </script>
 
 </body>
 </html>
