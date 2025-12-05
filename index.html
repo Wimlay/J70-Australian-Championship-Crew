@@ -118,8 +118,11 @@
 <script>
   let sortDirection = {}; // stores sort direction per column
 
-  async function loadCrewData() {
+async function loadCrewData() {
+  try {
     const response = await fetch('boats.json');
+    if (!response.ok) throw new Error("Boats file not found");
+
     const boats = await response.json();
 
     const table = document.querySelector('table');
@@ -134,14 +137,10 @@
         row.appendChild(td);
       });
 
-      // Crew fields sorted numerically
+      // Sorted crew fields
       const crewFields = Object.keys(boat)
         .filter(key => key.startsWith('Crew'))
-        .sort((a, b) => {
-          const numA = parseInt(a.replace(/\D/g, ''));
-          const numB = parseInt(b.replace(/\D/g, ''));
-          return numA - numB;
-        });
+        .sort((a, b) => parseInt(a.replace(/\D/g,'')) - parseInt(b.replace(/\D/g,'')));
 
       const crewTd = document.createElement('td');
       crewTd.textContent = crewFields
@@ -149,13 +148,18 @@
         .filter(Boolean)
         .join("\n");
 
+      crewTd.style.whiteSpace = "pre-line";
       row.appendChild(crewTd);
 
       table.appendChild(row);
     });
 
     enableSorting();
+  } catch (err) {
+    console.error("Error loading boats.json:", err);
   }
+}
+
 
   function enableSorting() {
     const table = document.querySelector("table");
