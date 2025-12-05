@@ -116,6 +116,8 @@
   </footer>
 
 <script>
+  let sortDirection = {}; // stores sort direction per column
+
   async function loadCrewData() {
     const response = await fetch('boats.json');
     const boats = await response.json();
@@ -132,7 +134,7 @@
         row.appendChild(td);
       });
 
-      // Detect all Crew fields: Crew 1, Crew 2, Crew 3, Crew 10, etc.
+      // Crew fields sorted numerically
       const crewFields = Object.keys(boat)
         .filter(key => key.startsWith('Crew'))
         .sort((a, b) => {
@@ -141,22 +143,57 @@
           return numA - numB;
         });
 
-      // Combine crew into lines
       const crewTd = document.createElement('td');
-      const crewList = crewFields
+      crewTd.textContent = crewFields
         .map(key => boat[key])
-        .filter(name => name && name.trim() !== '')
+        .filter(Boolean)
         .join("\n");
 
-      crewTd.textContent = crewList;
       row.appendChild(crewTd);
 
       table.appendChild(row);
     });
+
+    enableSorting();
+  }
+
+  function enableSorting() {
+    const table = document.querySelector("table");
+    const headers = table.querySelectorAll("th");
+
+    headers.forEach((header, index) => {
+      sortDirection[index] = 1; // initial ascending
+
+      header.addEventListener("click", () => {
+        sortTableByColumn(table, index);
+        sortDirection[index] *= -1; // toggle sort direction
+      });
+    });
+  }
+
+  function sortTableByColumn(table, columnIndex) {
+    const rows = Array.from(table.querySelectorAll("tr")).slice(1); // skip header row
+    const isNumeric = (value) => /^\d+(\.\d+)?$/.test(value.replace(/\s+/g, ''));
+
+    rows.sort((a, b) => {
+      const A = a.children[columnIndex].innerText.trim();
+      const B = b.children[columnIndex].innerText.trim();
+
+      // numeric sorting
+      if (isNumeric(A) && isNumeric(B)) {
+        return (parseFloat(A) - parseFloat(B)) * sortDirection[columnIndex];
+      }
+
+      // text sorting
+      return A.localeCompare(B) * sortDirection[columnIndex];
+    });
+
+    rows.forEach(row => table.appendChild(row));
   }
 
   loadCrewData();
 </script>
+
 
 </body>
 </html>
