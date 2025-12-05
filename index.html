@@ -4,9 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Regatta Boat & Crew List</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Inter', sans-serif;
       background-color: #f5f7fa;
       margin: 0;
       padding: 0;
@@ -14,7 +15,7 @@
     }
 
     header {
-      background-color: #0a1a33;
+      background: linear-gradient(90deg, #0a1a33, #123b7a);
       padding: 20px;
       text-align: center;
       color: white;
@@ -25,58 +26,74 @@
       justify-content: center;
       gap: 40px;
       margin-top: 20px;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
+      border-bottom: 1px solid #d7dce5;
+      padding-bottom: 15px;
     }
 
     .logo-container img {
-      max-height: 200px;
+      max-height: 120px;
       width: auto;
       object-fit: contain;
     }
 
     h1 {
       margin-top: 10px;
-      font-size: 2.2rem;
+      font-size: 2rem;
     }
 
     .table-container {
       width: 90%;
-      margin: 40px auto;
-      overflow-x: auto; /* scrollable on small screens */
+      margin: 30px auto;
+      overflow-x: auto;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       background-color: white;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      min-width: 600px; /* prevents squishing too much */
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+      min-width: 600px;
     }
 
     th {
-      background-color: #123b7a;
-      color: white;
+      background-color: #0a1a33;
+      color: #ffffff;
       padding: 12px;
       font-size: 1rem;
       letter-spacing: 0.5px;
-      cursor: pointer; /* for sorting */
+      cursor: pointer;
+      position: relative;
+      user-select: none;
     }
 
-    th:hover {
-      background-color: #0f3166;
+    th.sorted-asc::after {
+      content: " ▲";
+      font-size: 0.7rem;
+    }
+    th.sorted-desc::after {
+      content: " ▼";
+      font-size: 0.7rem;
     }
 
     td {
       padding: 12px;
       border-bottom: 1px solid #d7dce5;
       font-size: 0.95rem;
-      white-space: pre-line; /* preserves line breaks in Crew column */
+      white-space: pre-line;
       line-height: 1.4;
     }
 
     tr:nth-child(even) {
-      background-color: #eef2f7;
+      background-color: #f0f3f9;
+    }
+
+    tr:hover {
+      background-color: #dbe4f7;
+      transition: background 0.2s ease;
     }
 
     footer {
@@ -84,6 +101,7 @@
       padding: 20px;
       font-size: 0.85rem;
       color: #0a1a33;
+      border-top: 1px solid #d7dce5;
       margin-top: 50px;
     }
 
@@ -150,12 +168,12 @@
           row.appendChild(td);
         });
 
-        // Crew fields (sorted numerically)
+        // Crew fields sorted numerically
         const crewFields = Object.keys(boat)
           .filter(key => key.startsWith('Crew'))
-          .sort((a, b) => parseInt(a.replace(/\D/g,'')) - parseInt(b.replace(/\D/g,'')));
+          .sort((a,b) => parseInt(a.replace(/\D/g,'')) - parseInt(b.replace(/\D/g,'')));
 
-        // Crew names sorted alphabetically within the cell
+        // Crew names alphabetically within the cell
         const crewTd = document.createElement('td');
         const crewList = crewFields
           .map(key => boat[key])
@@ -183,8 +201,17 @@
       sortDirection[index] = 1; // initial ascending
 
       header.addEventListener("click", () => {
+        // Remove existing sorted classes
+        headers.forEach(h => h.classList.remove('sorted-asc','sorted-desc'));
+
         sortTableByColumn(table, index);
-        sortDirection[index] *= -1; // toggle direction
+        // Add sorted class to indicate direction
+        if (sortDirection[index] === 1) {
+          header.classList.add('sorted-asc');
+        } else {
+          header.classList.add('sorted-desc');
+        }
+        sortDirection[index] *= -1; // toggle
       });
     });
   }
