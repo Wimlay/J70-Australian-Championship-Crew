@@ -30,7 +30,7 @@
     }
 
     .logo-container img {
-      max-height: 90px;
+      max-height: 200px;
       width: auto;
       object-fit: contain;
     }
@@ -104,9 +104,7 @@
       <th>Bow Number</th>
       <th>Boat Name</th>
       <th>Skipper</th>
-      <th>Crew 1</th>
-      <th>Crew 2</th>
-      <th>Crew 3</th>
+      <th>Crew</th></th>
     </tr>
     <!-- Table rows will be populated dynamically -->
   </table>
@@ -123,6 +121,28 @@
       const table = document.querySelector('table');
 
       boats.forEach(boat => {
+        const row = document.createElement('tr');
+
+        // Fixed fields
+        ['Club','Sail Number','Bow Number','Boat Name','Skipper'].forEach(field => {
+          const td = document.createElement('td');
+          td.textContent = boat[field] || '';
+          row.appendChild(td);
+        });
+
+        // Combine Crew 1–3 into one cell
+        const crewTd = document.createElement('td');
+        const crewList = [boat['Crew 1'], boat['Crew 2'], boat['Crew 3']]
+          .filter(name => name && name.trim() !== '')
+          .join("
+");
+
+        crewTd.textContent = crewList;
+        crewTd.style.whiteSpace = "pre-line"; // keeps line breaks
+        row.appendChild(crewTd);
+
+        table.appendChild(row);
+      });(boat => {
         const row = document.createElement('tr');
         ['Club','Sail Number','Bow Number','Boat Name','Skipper','Crew 1','Crew 2','Crew 3'].forEach(field => {
           const td = document.createElement('td');
