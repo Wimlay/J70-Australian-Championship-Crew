@@ -60,6 +60,7 @@
       padding: 12px;
       border-bottom: 1px solid #d7dce5;
       font-size: 0.95rem;
+      white-space: pre-line;
     }
 
     tr:nth-child(even) {
@@ -105,9 +106,9 @@
       <th>Bow Number</th>
       <th>Boat Name</th>
       <th>Skipper</th>
-      <th>Crew</th></th>
+      <th>Crew</th>
     </tr>
-    <!-- Table rows will be populated dynamically -->
+    <!-- Dynamic rows go here -->
   </table>
 
   <footer>
@@ -131,10 +132,16 @@
         row.appendChild(td);
       });
 
-      // Detect all crew fields dynamically: "Crew 1", "Crew 2", ... any number
-      const crewFields = Object.keys(boat).filter(key => key.startsWith('Crew'));
+      // Detect all Crew fields: Crew 1, Crew 2, Crew 3, Crew 10, etc.
+      const crewFields = Object.keys(boat)
+        .filter(key => key.startsWith('Crew'))
+        .sort((a, b) => {
+          const numA = parseInt(a.replace(/\D/g, ''));
+          const numB = parseInt(b.replace(/\D/g, ''));
+          return numA - numB;
+        });
 
-      // Build crew list with line breaks
+      // Combine crew into lines
       const crewTd = document.createElement('td');
       const crewList = crewFields
         .map(key => boat[key])
@@ -142,7 +149,6 @@
         .join("\n");
 
       crewTd.textContent = crewList;
-      crewTd.style.whiteSpace = "pre-line";
       row.appendChild(crewTd);
 
       table.appendChild(row);
@@ -151,7 +157,6 @@
 
   loadCrewData();
 </script>
-
 
 </body>
 </html>
