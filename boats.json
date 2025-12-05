@@ -1,0 +1,22 @@
+[
+  {
+    "Club": "RSYS",
+    "Sail Number": 1111,
+    "Bow Number": 11,
+    "Boat Name": "Tester",
+    "Skipper": "Rob Ridley",
+    "Crew 1": "Will Imlay",
+    "Crew 2": "Marg",
+    "Crew 3": "Dan"
+  },
+  {
+    "Club": "DSC",
+    "Sail Number": 2222,
+    "Bow Number": 22,
+    "Boat Name": "TestAgain",
+    "Skipper": "Will",
+    "Crew 1": "Rob",
+    "Crew 2": "Jules",
+    "Crew 3": "Hamish"
+  }
+]
