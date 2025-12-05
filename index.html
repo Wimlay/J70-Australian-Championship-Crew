@@ -40,12 +40,18 @@
       font-size: 2.2rem;
     }
 
-    table {
+    .table-container {
       width: 90%;
       margin: 40px auto;
+      overflow-x: auto; /* scrollable on small screens */
+    }
+
+    table {
+      width: 100%;
       border-collapse: collapse;
       background-color: white;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      min-width: 600px; /* prevents squishing too much */
     }
 
     th {
@@ -54,13 +60,19 @@
       padding: 12px;
       font-size: 1rem;
       letter-spacing: 0.5px;
+      cursor: pointer; /* for sorting */
+    }
+
+    th:hover {
+      background-color: #0f3166;
     }
 
     td {
       padding: 12px;
       border-bottom: 1px solid #d7dce5;
       font-size: 0.95rem;
-      white-space: pre-line;
+      white-space: pre-line; /* preserves line breaks in Crew column */
+      line-height: 1.4;
     }
 
     tr:nth-child(even) {
@@ -81,8 +93,9 @@
         margin-bottom: 10px;
       }
 
-      table {
-        width: 100%;
+      th, td {
+        padding: 8px;
+        font-size: 0.85rem;
       }
     }
   </style>
@@ -99,17 +112,18 @@
     <img src="J70-logo.png" alt="J/70 Logo" />
   </div>
 
-  <table>
-    <tr>
-      <th>Club</th>
-      <th>Sail Number</th>
-      <th>Bow Number</th>
-      <th>Boat Name</th>
-      <th>Skipper</th>
-      <th>Crew</th>
-    </tr>
-    <!-- Dynamic rows go here -->
-  </table>
+  <div class="table-container">
+    <table>
+      <tr>
+        <th>Club</th>
+        <th>Sail Number</th>
+        <th>Bow Number</th>
+        <th>Boat Name</th>
+        <th>Skipper</th>
+        <th>Crew</th>
+      </tr>
+    </table>
+  </div>
 
   <footer>
     © Regatta Crew List
@@ -118,48 +132,48 @@
 <script>
   let sortDirection = {}; // stores sort direction per column
 
-async function loadCrewData() {
-  try {
-    const response = await fetch('boats.json');
-    if (!response.ok) throw new Error("Boats file not found");
+  async function loadCrewData() {
+    try {
+      const response = await fetch('boats.json?cache=' + Date.now());
+      if (!response.ok) throw new Error("Boats file not found");
 
-    const boats = await response.json();
+      const boats = await response.json();
+      const table = document.querySelector('table');
 
-    const table = document.querySelector('table');
+      boats.forEach(boat => {
+        const row = document.createElement('tr');
 
-    boats.forEach(boat => {
-      const row = document.createElement('tr');
+        // Fixed fields
+        ['Club','Sail Number','Bow Number','Boat Name','Skipper'].forEach(field => {
+          const td = document.createElement('td');
+          td.textContent = boat[field] || '';
+          row.appendChild(td);
+        });
 
-      // Fixed fields
-      ['Club','Sail Number','Bow Number','Boat Name','Skipper'].forEach(field => {
-        const td = document.createElement('td');
-        td.textContent = boat[field] || '';
-        row.appendChild(td);
+        // Crew fields (sorted numerically)
+        const crewFields = Object.keys(boat)
+          .filter(key => key.startsWith('Crew'))
+          .sort((a, b) => parseInt(a.replace(/\D/g,'')) - parseInt(b.replace(/\D/g,'')));
+
+        // Crew names sorted alphabetically within the cell
+        const crewTd = document.createElement('td');
+        const crewList = crewFields
+          .map(key => boat[key])
+          .filter(Boolean)
+          .sort((a,b) => a.localeCompare(b))
+          .join("\n");
+
+        crewTd.textContent = crewList;
+        row.appendChild(crewTd);
+
+        table.appendChild(row);
       });
 
-      // Sorted crew fields
-      const crewFields = Object.keys(boat)
-        .filter(key => key.startsWith('Crew'))
-        .sort((a, b) => parseInt(a.replace(/\D/g,'')) - parseInt(b.replace(/\D/g,'')));
-
-      const crewTd = document.createElement('td');
-      crewTd.textContent = crewFields
-        .map(key => boat[key])
-        .filter(Boolean)
-        .join("\n");
-
-      crewTd.style.whiteSpace = "pre-line";
-      row.appendChild(crewTd);
-
-      table.appendChild(row);
-    });
-
-    enableSorting();
-  } catch (err) {
-    console.error("Error loading boats.json:", err);
+      enableSorting();
+    } catch (err) {
+      console.error("Error loading boats.json:", err);
+    }
   }
-}
-
 
   function enableSorting() {
     const table = document.querySelector("table");
@@ -170,25 +184,23 @@ async function loadCrewData() {
 
       header.addEventListener("click", () => {
         sortTableByColumn(table, index);
-        sortDirection[index] *= -1; // toggle sort direction
+        sortDirection[index] *= -1; // toggle direction
       });
     });
   }
 
   function sortTableByColumn(table, columnIndex) {
-    const rows = Array.from(table.querySelectorAll("tr")).slice(1); // skip header row
+    const rows = Array.from(table.querySelectorAll("tr")).slice(1); // skip header
     const isNumeric = (value) => /^\d+(\.\d+)?$/.test(value.replace(/\s+/g, ''));
 
     rows.sort((a, b) => {
       const A = a.children[columnIndex].innerText.trim();
       const B = b.children[columnIndex].innerText.trim();
 
-      // numeric sorting
       if (isNumeric(A) && isNumeric(B)) {
         return (parseFloat(A) - parseFloat(B)) * sortDirection[columnIndex];
       }
 
-      // text sorting
       return A.localeCompare(B) * sortDirection[columnIndex];
     });
 
@@ -197,7 +209,6 @@ async function loadCrewData() {
 
   loadCrewData();
 </script>
-
 
 </body>
 </html>
