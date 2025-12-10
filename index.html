@@ -116,6 +116,40 @@
         font-size: 0.85rem;
       }
     }
+    /* Set specific column widths */
+th:nth-child(1), td:nth-child(1) {  /* Club */
+  width: 80px;
+  text-align: center;
+}
+
+th:nth-child(2), td:nth-child(2) {  /* Sail Number */
+  width: 110px;
+  text-align: center;
+}
+
+th:nth-child(3), td:nth-child(3) {  /* Bow Number */
+  width: 110px;
+  text-align: center;
+}
+
+/* Keep larger columns flexible */
+th:nth-child(4), td:nth-child(4) {  /* Boat Name */
+  width: 180px;
+}
+
+th:nth-child(5), td:nth-child(5) {  /* Skipper */
+  width: 160px;
+}
+
+th:nth-child(6), td:nth-child(6) {  /* Crew */
+  width: auto;
+}
+
+/* Align header text the same as table cells */
+th {
+  text-align: center;
+}
+
   </style>
   <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett">
 </head>
