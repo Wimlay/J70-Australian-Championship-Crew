@@ -15,18 +15,33 @@
     }
 
     header {
-      background: linear-gradient(90deg, #00068b, #00335b);
+      background-color: #0a1a33;
       padding: 20px;
       text-align: center;
       color: white;
     }
 
+    .search-container {
+      width: 90%;
+      margin: 20px auto;
+      text-align: right;
+    }
+
+    .search-container input {
+      padding: 6px 12px;
+      font-size: 1rem;
+      width: 200px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
     table {
       width: 90%;
-      margin: 30px auto;
+      margin: 0 auto 40px auto;
       border-collapse: collapse;
       background-color: white;
       box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      min-width: 650px;
     }
 
     th, td {
@@ -35,15 +50,19 @@
     }
 
     th {
-      background-color: #00335b;
+      background-color: #123b7a;
       color: white;
       cursor: pointer;
-      text-align: left;
     }
 
-    td {
-      white-space: pre-line;
-    }
+    /* Option B column alignment */
+    th:nth-child(1), td:nth-child(1),
+    th:nth-child(2), td:nth-child(2),
+    th:nth-child(3), td:nth-child(3) { text-align: center; }
+
+    th:nth-child(4), td:nth-child(4),
+    th:nth-child(5), td:nth-child(5),
+    th:nth-child(6), td:nth-child(6) { text-align: left; }
 
     tr:nth-child(even) {
       background-color: #eef2f7;
@@ -52,15 +71,19 @@
     @media (max-width: 600px) {
       table { width: 100%; font-size: 14px; }
       th, td { padding: 8px; }
+      .search-container { text-align: center; }
     }
   </style>
 </head>
-
 <body>
 
 <header>
   <h1>Regatta Boat & Crew List</h1>
 </header>
+
+<div class="search-container">
+  <input type="text" id="searchBox" placeholder="Search boats or crew..." />
+</div>
 
 <table id="boatTable">
   <thead>
@@ -77,56 +100,101 @@
 </table>
 
 <script>
-  const SHEET_ID = "1T3aZEkERIw8-vStNG9sKv1ybT0WJ2gkixx41Ga_8Iks";
-  const CSV_URL = `https://docs.google.com/spreadsheets/d/${1T3aZEkERIw8-vStNG9sKv1ybT0WJ2gkixx41Ga_8Iks}/gviz/tq?tqx=out:csv`;
+const SHEET_ID = "1T3aZEkERIw8-vStNG9sKv1ybT0WJ2gkixx41Ga_8Iks";
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${1T3aZEkERIw8-vStNG9sKv1ybT0WJ2gkixx41Ga_8Iks}/gviz/tq?tqx=out:csv`;
 
-  async function loadBoatsFromGoogleSheet() {
-    try {
-      const response = await fetch(CSV_URL);
-      const csvText = await response.text();
+let boatsData = []; // store original data for filtering
+let sortDirections = {}; // for sorting columns
 
-      const rows = csvText.split("\n").map(r => r.split(","));
-      const headers = rows.shift().map(h => h.trim());
+async function loadBoatsFromGoogleSheet() {
+  try {
+    const response = await fetch(CSV_URL);
+    const csvText = await response.text();
 
-      const boats = rows.map(row => {
-        let obj = {};
-        row.forEach((cell, i) => obj[headers[i]] = cell.trim());
-        return obj;
-      });
+    const rows = csvText.split("\n").map(r => r.split(","));
+    const headers = rows.shift().map(h => h.trim());
 
-      populateTable(boats);
-    } catch (err) {
-      console.error("Error loading Google Sheet:", err);
-    }
-  }
-
-  function populateTable(boats) {
-    const tbody = document.querySelector("#boatTable tbody");
-    tbody.innerHTML = "";
-
-    boats.forEach(boat => {
-      const tr = document.createElement("tr");
-
-      const fixedFields = ["Club", "Sail Number", "Bow Number", "Boat Name", "Skipper"];
-      fixedFields.forEach(field => {
-        const td = document.createElement("td");
-        td.textContent = boat[field] || "";
-        tr.appendChild(td);
-      });
-
-      const crewFields = Object.keys(boat)
-        .filter(k => k.toLowerCase().startsWith("crew"))
-        .sort((a, b) => parseInt(a.replace(/\D/g, "")) - parseInt(b.replace(/\D/g, "")));
-
-      const crewTd = document.createElement("td");
-      crewTd.textContent = crewFields.map(k => boat[k]).filter(Boolean).join("\n");
-      tr.appendChild(crewTd);
-
-      tbody.appendChild(tr);
+    boatsData = rows.map(row => {
+      let obj = {};
+      row.forEach((cell, i) => obj[headers[i]] = cell.trim());
+      return obj;
     });
-  }
 
-  loadBoatsFromGoogleSheet();
+    populateTable(boatsData);
+    enableSorting();
+  } catch (err) {
+    console.error("Error loading Google Sheet:", err);
+  }
+}
+
+function populateTable(data) {
+  const tbody = document.querySelector("#boatTable tbody");
+  tbody.innerHTML = "";
+
+  data.forEach(boat => {
+    const tr = document.createElement("tr");
+
+    const fixedFields = ["Club","Sail Number","Bow Number","Boat Name","Skipper"];
+    fixedFields.forEach(field => {
+      const td = document.createElement("td");
+      td.textContent = boat[field] || "";
+      tr.appendChild(td);
+    });
+
+    const crewFields = Object.keys(boat)
+      .filter(k => k.toLowerCase().startsWith("crew"))
+      .sort((a,b) => parseInt(a.replace(/\D/g,"")) - parseInt(b.replace(/\D/g,"")));
+
+    const crewTd = document.createElement("td");
+    crewTd.textContent = crewFields.map(k => boat[k]).filter(Boolean).join("\n");
+    tr.appendChild(crewTd);
+
+    tbody.appendChild(tr);
+  });
+}
+
+// ---------------- Sort Table ----------------
+function enableSorting() {
+  const table = document.querySelector("#boatTable");
+  const headers = table.querySelectorAll("th");
+
+  headers.forEach((th, i) => {
+    sortDirections[i] = 1;
+    th.addEventListener("click", () => {
+      sortTableByColumn(i);
+      sortDirections[i] *= -1; // toggle
+    });
+  });
+}
+
+function sortTableByColumn(colIndex) {
+  const tbody = document.querySelector("#boatTable tbody");
+  const rows = Array.from(tbody.querySelectorAll("tr"));
+
+  const isNumeric = v => /^\d+(\.\d+)?$/.test(v.replace(/\s+/g,''));
+
+  rows.sort((a,b) => {
+    const A = a.children[colIndex].innerText.trim();
+    const B = b.children[colIndex].innerText.trim();
+    if (isNumeric(A) && isNumeric(B)) {
+      return (parseFloat(A) - parseFloat(B)) * sortDirections[colIndex];
+    }
+    return A.localeCompare(B) * sortDirections[colIndex];
+  });
+
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+// ---------------- Search / Filter ----------------
+document.getElementById("searchBox").addEventListener("input", e => {
+  const query = e.target.value.toLowerCase();
+  const filtered = boatsData.filter(boat => {
+    return Object.values(boat).some(val => val && val.toLowerCase().includes(query));
+  });
+  populateTable(filtered);
+});
+
+loadBoatsFromGoogleSheet();
 </script>
 
 </body>
