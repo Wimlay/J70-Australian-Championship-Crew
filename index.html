@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Regatta Boat & Crew List</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <title>J70 Australian Championship Boat & Crew Register</title>
+
   <style>
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: Arial, sans-serif;
       background-color: #f5f7fa;
       margin: 0;
       padding: 0;
@@ -15,7 +15,7 @@
     }
 
     header {
-      background: linear-gradient(90deg, #00068b, #00335b);
+      background-color: #0a1a33;
       padding: 20px;
       text-align: center;
       color: white;
@@ -26,57 +26,43 @@
       justify-content: center;
       gap: 40px;
       margin-top: 20px;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       flex-wrap: wrap;
-      border-bottom: 1px solid #d7dce5;
-      padding-bottom: 15px;
     }
 
     .logo-container img {
-      max-height: 120px;
+      max-height: 200px;
       width: auto;
       object-fit: contain;
     }
 
     h1 {
       margin-top: 10px;
-      font-size: 2rem;
+      font-size: 2.2rem;
     }
 
     .table-container {
-      width: 90%;
-      margin: 30px auto;
+      width: 100%;
       overflow-x: auto;
+      margin: 40px auto;
     }
 
     table {
-      width: 100%;
+      width: 90%;
+      margin: 0 auto;
       border-collapse: collapse;
       background-color: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-      min-width: 600px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      min-width: 650px;
     }
 
     th {
-      background-color: #00335b;
-      color: #ffffff;
+      background-color: #123b7a;
+      color: white;
       padding: 12px;
       font-size: 1rem;
       letter-spacing: 0.5px;
       cursor: pointer;
-      position: relative;
-      user-select: none;
-    }
-
-    th.sorted-asc::after {
-      content: " ▲";
-      font-size: 0.7rem;
-    }
-    th.sorted-desc::after {
-      content: " ▼";
-      font-size: 0.7rem;
     }
 
     td {
@@ -88,12 +74,7 @@
     }
 
     tr:nth-child(even) {
-      background-color: #f0f3f9;
-    }
-
-    tr:hover {
-      background-color: #dbe4f7;
-      transition: background 0.2s ease;
+      background-color: #eef2f7;
     }
 
     footer {
@@ -101,7 +82,6 @@
       padding: 20px;
       font-size: 0.85rem;
       color: #0a1a33;
-      border-top: 1px solid #d7dce5;
       margin-top: 50px;
     }
 
@@ -111,174 +91,145 @@
         margin-bottom: 10px;
       }
 
-      th, td {
-        padding: 8px;
+      table {
+        width: 100%;
         font-size: 0.85rem;
       }
+
+      th, td {
+        padding: 8px;
+      }
     }
-    /* Set specific column widths */
-th:nth-child(1), td:nth-child(1) {  /* Club */
-  width: 80px;
-  text-align: center;
-}
 
-th:nth-child(2), td:nth-child(2) {  /* Sail Number */
-  width: 110px;
-  text-align: center;
-}
+    /* COLUMN ALIGNMENT FIX (Option B) */
+    /* Center first three columns */
+    th:nth-child(1), td:nth-child(1),
+    th:nth-child(2), td:nth-child(2),
+    th:nth-child(3), td:nth-child(3) {
+      text-align: center;
+    }
 
-th:nth-child(3), td:nth-child(3) {  /* Bow Number */
-  width: 110px;
-  text-align: center;
-}
+    /* Left-align Boat Name, Skipper, Crew */
+    th:nth-child(4), td:nth-child(4),
+    th:nth-child(5), td:nth-child(5),
+    th:nth-child(6), td:nth-child(6) {
+      text-align: left;
+    }
 
-/* Keep larger columns flexible */
-th:nth-child(4), td:nth-child(4) {  /* Boat Name */
-  width: 180px;
-}
-
-th:nth-child(5), td:nth-child(5) {  /* Skipper */
-  width: 160px;
-}
-
-th:nth-child(6), td:nth-child(6) {  /* Crew */
-  width: auto;
-}
-
-/* Center first three columns */
-th:nth-child(1), td:nth-child(1),
-th:nth-child(2), td:nth-child(2),
-th:nth-child(3), td:nth-child(3) {
-  text-align: center;
-}
-
-/* Left-align the remaining columns */
-th:nth-child(4), td:nth-child(4),
-th:nth-child(5), td:nth-child(5),
-th:nth-child(6), td:nth-child(6) {
-  text-align: left;
-}
-
-
+    /* Optional: reduce column widths */
+    th:nth-child(1), td:nth-child(1) { width: 80px; }
+    th:nth-child(2), td:nth-child(2) { width: 110px; }
+    th:nth-child(3), td:nth-child(3) { width: 110px; }
   </style>
+
   <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett">
 </head>
+
 <body>
 
-  <header>
-    <h1>J/70 Australian Championship Crew List</h1>
-  </header>
+<header>
+  <h1>Regatta Boat & Crew List</h1>
+</header>
 
-  <div class="logo-container">
-    <img src="RSYS-logo.png" alt="RSYS Logo" />
-    <img src="J70-logo.png" alt="J/70 Logo" />
-  </div>
+<div class="logo-container">
+  <img src="RSYS-logo.png" alt="RSYS Logo" />
+  <img src="J70-logo.png" alt="J/70 Logo" />
+</div>
 
-  <div class="table-container">
-    <table>
-      <tr>
-        <th>Club</th>
-        <th>Sail Number</th>
-        <th>Bow Number</th>
-        <th>Boat Name</th>
-        <th>Skipper</th>
-        <th>Crew</th>
-      </tr>
-    </table>
-  </div>
+<div class="table-container">
+  <table>
+    <tr>
+      <th>Club</th>
+      <th>Sail Number</th>
+      <th>Bow Number</th>
+      <th>Boat Name</th>
+      <th>Skipper</th>
+      <th>Crew</th>
+    </tr>
+    <!-- Dynamic rows go here -->
+  </table>
+</div>
 
-  <footer>
-    © RSYS Sailing
-  </footer>
+<footer>
+  © Sailing RSYS
+</footer>
 
 <script>
-  let sortDirection = {}; // stores sort direction per column
+let sortDirection = {};
 
-  async function loadCrewData() {
-    try {
-      const response = await fetch('boats.json?cache=' + Date.now());
-      if (!response.ok) throw new Error("Boats file not found");
+async function loadCrewData() {
+  try {
+    const response = await fetch('boats.json');
+    if (!response.ok) throw new Error("Could not load boats.json");
 
-      const boats = await response.json();
-      const table = document.querySelector('table');
+    const boats = await response.json();
+    const table = document.querySelector('table');
 
-      boats.forEach(boat => {
-        const row = document.createElement('tr');
+    boats.forEach(boat => {
+      const row = document.createElement('tr');
 
-        // Fixed fields
-        ['Club','Sail Number','Bow Number','Boat Name','Skipper'].forEach(field => {
-          const td = document.createElement('td');
-          td.textContent = boat[field] || '';
-          row.appendChild(td);
-        });
-
-        // Crew fields sorted numerically
-        const crewFields = Object.keys(boat)
-          .filter(key => key.startsWith('Crew'))
-          .sort((a,b) => parseInt(a.replace(/\D/g,'')) - parseInt(b.replace(/\D/g,'')));
-
-        // Crew names alphabetically within the cell
-        const crewTd = document.createElement('td');
-        const crewList = crewFields
-          .map(key => boat[key])
-          .filter(Boolean)
-          .sort((a,b) => a.localeCompare(b))
-          .join("\n");
-
-        crewTd.textContent = crewList;
-        row.appendChild(crewTd);
-
-        table.appendChild(row);
+      // Fixed fields in correct order
+      ['Club','Sail Number','Bow Number','Boat Name','Skipper'].forEach(field => {
+        const td = document.createElement('td');
+        td.textContent = boat[field] || '';
+        row.appendChild(td);
       });
 
-      enableSorting();
-    } catch (err) {
-      console.error("Error loading boats.json:", err);
+      // Crew fields (sorted & stacked)
+      const crewFields = Object.keys(boat)
+        .filter(key => key.startsWith('Crew'))
+        .sort((a, b) => parseInt(a.replace(/\D/g,'')) - parseInt(b.replace(/\D/g,'')));
+
+      const crewList = crewFields
+        .map(key => boat[key])
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b)) // alphabetical inside cell
+        .join("\n");
+
+      const crewTd = document.createElement('td');
+      crewTd.textContent = crewList;
+      row.appendChild(crewTd);
+
+      table.appendChild(row);
+    });
+
+    enableSorting();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function enableSorting() {
+  const table = document.querySelector("table");
+  const headers = table.querySelectorAll("th");
+
+  headers.forEach((header, index) => {
+    sortDirection[index] = 1;
+    header.addEventListener("click", () => {
+      sortTableByColumn(table, index);
+      sortDirection[index] *= -1;
+    });
+  });
+}
+
+function sortTableByColumn(table, col) {
+  const rows = Array.from(table.querySelectorAll("tr")).slice(1);
+
+  const isNumeric = v => /^\d+(\.\d+)?$/.test(v.replace(/\s+/g,''));
+  rows.sort((a, b) => {
+    const A = a.children[col].innerText.trim();
+    const B = b.children[col].innerText.trim();
+
+    if (isNumeric(A) && isNumeric(B)) {
+      return (parseFloat(A) - parseFloat(B)) * sortDirection[col];
     }
-  }
+    return A.localeCompare(B) * sortDirection[col];
+  });
 
-  function enableSorting() {
-    const table = document.querySelector("table");
-    const headers = table.querySelectorAll("th");
+  rows.forEach(row => table.appendChild(row));
+}
 
-    headers.forEach((header, index) => {
-      sortDirection[index] = 1; // initial ascending
-
-      header.addEventListener("click", () => {
-        // Remove existing sorted classes
-        headers.forEach(h => h.classList.remove('sorted-asc','sorted-desc'));
-
-        sortTableByColumn(table, index);
-        // Add sorted class to indicate direction
-        if (sortDirection[index] === 1) {
-          header.classList.add('sorted-asc');
-        } else {
-          header.classList.add('sorted-desc');
-        }
-        sortDirection[index] *= -1; // toggle
-      });
-    });
-  }
-
-  function sortTableByColumn(table, columnIndex) {
-    const rows = Array.from(table.querySelectorAll("tr")).slice(1); // skip header
-    const isNumeric = (value) => /^\d+(\.\d+)?$/.test(value.replace(/\s+/g, ''));
-
-    rows.sort((a, b) => {
-      const A = a.children[columnIndex].innerText.trim();
-      const B = b.children[columnIndex].innerText.trim();
-
-      if (isNumeric(A) && isNumeric(B)) {
-        return (parseFloat(A) - parseFloat(B)) * sortDirection[columnIndex];
-      }
-
-      return A.localeCompare(B) * sortDirection[columnIndex];
-    });
-
-    rows.forEach(row => table.appendChild(row));
-  }
-
-  loadCrewData();
+loadCrewData();
 </script>
 
 </body>
