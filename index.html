@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>J70 Australian Championship Boat & Crew Register</title>
+  <title>Regatta Boat & Crew List</title>
 
   <style>
     body {
@@ -11,7 +11,7 @@
       background-color: #f5f7fa;
       margin: 0;
       padding: 0;
-      color: #00068b;
+      color: #0a1a33;
     }
 
     header {
@@ -21,115 +21,39 @@
       color: white;
     }
 
-    .logo-container {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 20px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-
-    .logo-container img {
-      max-height: 200px;
-      width: auto;
-      object-fit: contain;
-    }
-
-    h1 {
-      margin-top: 10px;
-      font-size: 2.2rem;
-    }
-
-    .table-container {
-      width: 100%;
-      overflow-x: auto;
-      margin: 40px auto;
-    }
-
     table {
       width: 90%;
-      margin: 0 auto;
+      margin: 30px auto;
       border-collapse: collapse;
       background-color: white;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      min-width: 650px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #d7dce5;
     }
 
     th {
       background-color: #00335b;
       color: white;
-      padding: 12px;
-      font-size: 1rem;
-      letter-spacing: 0.5px;
       cursor: pointer;
+      text-align: left;
     }
 
     td {
-      padding: 12px;
-      border-bottom: 1px solid #d7dce5;
-      font-size: 0.95rem;
       white-space: pre-line;
-      line-height: 1.4;
     }
 
     tr:nth-child(even) {
       background-color: #eef2f7;
     }
 
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 0.85rem;
-      color: #00068b;
-      margin-top: 50px;
-    }
-
     @media (max-width: 600px) {
-      .logo-container img {
-        max-height: 60px;
-        margin-bottom: 10px;
-      }
-
-      table {
-        width: 100%;
-        font-size: 0.85rem;
-      }
-
-      th, td {
-        padding: 8px;
-      }
+      table { width: 100%; font-size: 14px; }
+      th, td { padding: 8px; }
     }
-
-    /* COLUMN ALIGNMENT FIX (Option B) */
-    /* Center first three columns */
-    th:nth-child(1), td:nth-child(1),
-    th:nth-child(2), td:nth-child(2),
-    th:nth-child(3), td:nth-child(3) {
-      text-align: center;
-    }
-
-    /* Left-align Boat Name, Skipper, Crew */
-    th:nth-child(4), td:nth-child(4),
-    th:nth-child(5), td:nth-child(5),
-    th:nth-child(6), td:nth-child(6) {
-      text-align: left;
-    }
-
-    /* Optional: reduce column widths */
-    th:nth-child(1), td:nth-child(1) { width: 80px; }
-    th:nth-child(2), td:nth-child(2) { width: 110px; }
-    th:nth-child(3), td:nth-child(3) { width: 110px; }
-
-    th.boat-name,
-th.skipper {
-    text-align: left;
-}
-    
-
   </style>
-
-  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett">
 </head>
 
 <body>
@@ -138,105 +62,71 @@ th.skipper {
   <h1>Regatta Boat & Crew List</h1>
 </header>
 
-<div class="logo-container">
-  <img src="RSYS-logo.png" alt="RSYS Logo" />
-  <img src="J70-logo.png" alt="J/70 Logo" />
-</div>
-
-<div class="table-container">
-  <table>
+<table id="boatTable">
+  <thead>
     <tr>
       <th>Club</th>
       <th>Sail Number</th>
       <th>Bow Number</th>
-      <th class="boat-name">Boat Name</th>
-<th class="skipper">Skipper</th>
+      <th>Boat Name</th>
+      <th>Skipper</th>
       <th>Crew</th>
     </tr>
-    <!-- Dynamic rows go here -->
-  </table>
-</div>
-
-<footer>
-  © Sailing RSYS
-</footer>
+  </thead>
+  <tbody></tbody>
+</table>
 
 <script>
-let sortDirection = {};
+  const SHEET_ID = "1T3aZEkERIw8-vStNG9sKv1ybT0WJ2gkixx41Ga_8Iks";
+  const CSV_URL = `https://docs.google.com/spreadsheets/d/${1T3aZEkERIw8-vStNG9sKv1ybT0WJ2gkixx41Ga_8Iks}/gviz/tq?tqx=out:csv`;
 
-async function loadCrewData() {
-  try {
-    const response = await fetch('boats.json');
-    if (!response.ok) throw new Error("Could not load boats.json");
+  async function loadBoatsFromGoogleSheet() {
+    try {
+      const response = await fetch(CSV_URL);
+      const csvText = await response.text();
 
-    const boats = await response.json();
-    const table = document.querySelector('table');
+      const rows = csvText.split("\n").map(r => r.split(","));
+      const headers = rows.shift().map(h => h.trim());
 
-    boats.forEach(boat => {
-      const row = document.createElement('tr');
-
-      // Fixed fields in correct order
-      ['Club','Sail Number','Bow Number','Boat Name','Skipper'].forEach(field => {
-        const td = document.createElement('td');
-        td.textContent = boat[field] || '';
-        row.appendChild(td);
+      const boats = rows.map(row => {
+        let obj = {};
+        row.forEach((cell, i) => obj[headers[i]] = cell.trim());
+        return obj;
       });
 
-      // Crew fields (sorted & stacked)
-      const crewFields = Object.keys(boat)
-        .filter(key => key.startsWith('Crew'))
-        .sort((a, b) => parseInt(a.replace(/\D/g,'')) - parseInt(b.replace(/\D/g,'')));
-
-      const crewList = crewFields
-        .map(key => boat[key])
-        .filter(Boolean)
-        .sort((a, b) => a.localeCompare(b)) // alphabetical inside cell
-        .join("\n");
-
-      const crewTd = document.createElement('td');
-      crewTd.textContent = crewList;
-      row.appendChild(crewTd);
-
-      table.appendChild(row);
-    });
-
-    enableSorting();
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-function enableSorting() {
-  const table = document.querySelector("table");
-  const headers = table.querySelectorAll("th");
-
-  headers.forEach((header, index) => {
-    sortDirection[index] = 1;
-    header.addEventListener("click", () => {
-      sortTableByColumn(table, index);
-      sortDirection[index] *= -1;
-    });
-  });
-}
-
-function sortTableByColumn(table, col) {
-  const rows = Array.from(table.querySelectorAll("tr")).slice(1);
-
-  const isNumeric = v => /^\d+(\.\d+)?$/.test(v.replace(/\s+/g,''));
-  rows.sort((a, b) => {
-    const A = a.children[col].innerText.trim();
-    const B = b.children[col].innerText.trim();
-
-    if (isNumeric(A) && isNumeric(B)) {
-      return (parseFloat(A) - parseFloat(B)) * sortDirection[col];
+      populateTable(boats);
+    } catch (err) {
+      console.error("Error loading Google Sheet:", err);
     }
-    return A.localeCompare(B) * sortDirection[col];
-  });
+  }
 
-  rows.forEach(row => table.appendChild(row));
-}
+  function populateTable(boats) {
+    const tbody = document.querySelector("#boatTable tbody");
+    tbody.innerHTML = "";
 
-loadCrewData();
+    boats.forEach(boat => {
+      const tr = document.createElement("tr");
+
+      const fixedFields = ["Club", "Sail Number", "Bow Number", "Boat Name", "Skipper"];
+      fixedFields.forEach(field => {
+        const td = document.createElement("td");
+        td.textContent = boat[field] || "";
+        tr.appendChild(td);
+      });
+
+      const crewFields = Object.keys(boat)
+        .filter(k => k.toLowerCase().startsWith("crew"))
+        .sort((a, b) => parseInt(a.replace(/\D/g, "")) - parseInt(b.replace(/\D/g, "")));
+
+      const crewTd = document.createElement("td");
+      crewTd.textContent = crewFields.map(k => boat[k]).filter(Boolean).join("\n");
+      tr.appendChild(crewTd);
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  loadBoatsFromGoogleSheet();
 </script>
 
 </body>
