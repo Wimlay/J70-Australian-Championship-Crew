@@ -147,10 +147,15 @@ function populateTable(data) {
       .sort((a,b) => parseInt(a.replace(/\D/g,"")) - parseInt(b.replace(/\D/g,"")));
 
     const crewTd = document.createElement("td");
-    crewTd.textContent = crewFields.map(k => boat[k]).filter(Boolean).join("\n");
-    tr.appendChild(crewTd);
+crewFields.map(k => boat[k])
+          .filter(Boolean)
+          .forEach(name => {
+              const div = document.createElement("div");
+              div.textContent = name;
+              crewTd.appendChild(div);
+          });
+tr.appendChild(crewTd);
 
-    tbody.appendChild(tr);
   });
 }
 
