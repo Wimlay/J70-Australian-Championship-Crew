@@ -15,7 +15,7 @@
     }
 
     header {
-      background-color: #0a1a33;
+      background: linear-gradient(90deg, #00068b, #00335b);
       padding: 20px;
       text-align: center;
       color: white;
@@ -50,12 +50,12 @@
     }
 
     th {
-      background-color: #123b7a;
+      background-color: #00335b;
       color: white;
       cursor: pointer;
     }
 
-    /* Option B column alignment */
+    /* Column alignment */
     th:nth-child(1), td:nth-child(1),
     th:nth-child(2), td:nth-child(2),
     th:nth-child(3), td:nth-child(3) { text-align: center; }
@@ -64,9 +64,7 @@
     th:nth-child(5), td:nth-child(5),
     th:nth-child(6), td:nth-child(6) { text-align: left; }
 
-    tr:nth-child(even) {
-      background-color: #eef2f7;
-    }
+    tr:nth-child(even) { background-color: #eef2f7; }
 
     @media (max-width: 600px) {
       table { width: 100%; font-size: 14px; }
@@ -101,29 +99,33 @@
 
 <script>
 const SHEET_ID = "1T3aZEkERIw8-vStNG9sKv1ybT0WJ2gkixx41Ga_8Iks";
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${1T3aZEkERIw8-vStNG9sKv1ybT0WJ2gkixx41Ga_8Iks}/gviz/tq?tqx=out:csv`;
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0&cache_bust=${Date.now()}`;
 
-let boatsData = []; // store original data for filtering
-let sortDirections = {}; // for sorting columns
+let boatsData = [];
+let sortDirections = {};
 
 async function loadBoatsFromGoogleSheet() {
   try {
     const response = await fetch(CSV_URL);
+    if (!response.ok) throw new Error("Failed to fetch sheet. Check sharing settings.");
     const csvText = await response.text();
 
     const rows = csvText.split("\n").map(r => r.split(","));
     const headers = rows.shift().map(h => h.trim());
 
-    boatsData = rows.map(row => {
-      let obj = {};
-      row.forEach((cell, i) => obj[headers[i]] = cell.trim());
-      return obj;
-    });
+    boatsData = rows
+      .filter(r => r.length > 1) // skip empty rows
+      .map(row => {
+        let obj = {};
+        row.forEach((cell,i) => obj[headers[i]] = cell.trim());
+        return obj;
+      });
 
     populateTable(boatsData);
     enableSorting();
-  } catch (err) {
+  } catch(err) {
     console.error("Error loading Google Sheet:", err);
+    alert("Error loading sheet: make sure the sheet is public and the ID is correct.");
   }
 }
 
@@ -134,8 +136,7 @@ function populateTable(data) {
   data.forEach(boat => {
     const tr = document.createElement("tr");
 
-    const fixedFields = ["Club","Sail Number","Bow Number","Boat Name","Skipper"];
-    fixedFields.forEach(field => {
+    ["Club","Sail Number","Bow Number","Boat Name","Skipper"].forEach(field => {
       const td = document.createElement("td");
       td.textContent = boat[field] || "";
       tr.appendChild(td);
@@ -155,14 +156,12 @@ function populateTable(data) {
 
 // ---------------- Sort Table ----------------
 function enableSorting() {
-  const table = document.querySelector("#boatTable");
-  const headers = table.querySelectorAll("th");
-
-  headers.forEach((th, i) => {
+  const headers = document.querySelectorAll("#boatTable th");
+  headers.forEach((th,i) => {
     sortDirections[i] = 1;
     th.addEventListener("click", () => {
       sortTableByColumn(i);
-      sortDirections[i] *= -1; // toggle
+      sortDirections[i] *= -1;
     });
   });
 }
@@ -170,7 +169,6 @@ function enableSorting() {
 function sortTableByColumn(colIndex) {
   const tbody = document.querySelector("#boatTable tbody");
   const rows = Array.from(tbody.querySelectorAll("tr"));
-
   const isNumeric = v => /^\d+(\.\d+)?$/.test(v.replace(/\s+/g,''));
 
   rows.sort((a,b) => {
@@ -188,9 +186,9 @@ function sortTableByColumn(colIndex) {
 // ---------------- Search / Filter ----------------
 document.getElementById("searchBox").addEventListener("input", e => {
   const query = e.target.value.toLowerCase();
-  const filtered = boatsData.filter(boat => {
-    return Object.values(boat).some(val => val && val.toLowerCase().includes(query));
-  });
+  const filtered = boatsData.filter(boat =>
+    Object.values(boat).some(val => val && val.toLowerCase().includes(query))
+  );
   populateTable(filtered);
 });
 
