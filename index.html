@@ -21,33 +21,27 @@
       color: white;
     }
 
-<!-- Logos -->
-<div class="logo-container">
-  <img src="RSYS-logo.png" alt="RSYS Logo" class="logo" />
-  <img src="J70-logo.png" alt="J/70 Logo" class="logo" />
-</div>
+    /* Logos styling */
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
 
-.logo-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 40px;
-  flex-wrap: wrap;
-  margin: 20px 0;
-}
+    .logo-container .logo {
+      max-height: 120px;
+      width: auto;
+      object-fit: contain;
+    }
 
-.logo-container .logo {
-  max-height: 120px;
-  width: auto;
-  object-fit: contain;
-}
-
-@media (max-width: 600px) {
-  .logo-container .logo {
-    max-height: 60px;
-  }
-}
-
+    @media (max-width: 600px) {
+      .logo-container .logo {
+        max-height: 60px;
+      }
+    }
 
     .search-container {
       width: 90%;
@@ -106,6 +100,12 @@
 <header>
   <h1>Regatta Boat & Crew List</h1>
 </header>
+
+<!-- Logos -->
+<div class="logo-container">
+  <img src="RSYS-logo.png" alt="RSYS Logo" class="logo" />
+  <img src="J70-logo.png" alt="J/70 Logo" class="logo" />
+</div>
 
 <div class="search-container">
   <input type="text" id="searchBox" placeholder="Search boats or crew..." />
@@ -174,14 +174,13 @@ function populateTable(data) {
       .filter(k => k.toLowerCase().startsWith("crew"))
       .sort((a,b) => parseInt(a.replace(/\D/g,"")) - parseInt(b.replace(/\D/g,"")));
 
-   const crewTd = document.createElement("td");
-crewTd.innerHTML = crewFields
-  .map(k => boat[k])
-  .filter(Boolean)
-  .map(name => name.trim())
-  .join("<br>"); // each crew member separated by a line break
-tr.appendChild(crewTd);
-
+    const crewTd = document.createElement("td");
+    crewTd.innerHTML = crewFields
+      .map(k => boat[k])
+      .filter(Boolean)
+      .map(name => name.trim())
+      .join("<br>"); // stack crew vertically
+    tr.appendChild(crewTd);
 
     tbody.appendChild(tr);
   });
