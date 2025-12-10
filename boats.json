@@ -1,34 +1,54 @@
 [
   {
     "Club": "RSYS",
-    "Sail Number": 1111,
-    "Bow Number": 11,
+    "Sail Number": "1111",
+    "Bow Number": "11",
     "Boat Name": "Tester",
     "Skipper": "Rob Ridley",
     "Crew 1": "Will Imlay",
     "Crew 2": "Marg",
     "Crew 3": "Dan",
-    "Crew 4": "Vanessa",
-    "Crew 5": "Reid (Only 11-13 Jan)"
+    "Crew 4": "",
+    "New Crew": "",
+    "": ""
   },
   {
     "Club": "DSC",
-    "Sail Number": 2222,
-    "Bow Number": 22,
+    "Sail Number": "2222",
+    "Bow Number": "22",
     "Boat Name": "TestAgain",
     "Skipper": "Will",
     "Crew 1": "Rob",
     "Crew 2": "Jules",
-    "Crew 3": "Hamish aidvuiauhciujhaIuhrwiw"
+    "Crew 3": "Hamish ahkucgbuyhgvutygbv",
+    "Crew 4": "",
+    "New Crew": "Peter",
+    "": ""
   },
   {
     "Club": "SFS",
-    "Sail Number": 2211,
-    "Bow Number": 17,
-    "Boat Name": "Again",
-    "Skipper": "Rob",
-    "Crew 1": "Captain Cook",
-    "Crew 2": "Jules Verne",
-    "Crew 3": "Ringo"
+    "Sail Number": "3333",
+    "Bow Number": "7",
+    "Boat Name": "Beatle",
+    "Skipper": "John",
+    "Crew 1": "Paul",
+    "Crew 2": "George",
+    "Crew 3": "Ringo",
+    "Crew 4": "",
+    "New Crew": "",
+    "": ""
+  },
+  {
+    "Club": "LC12SSC",
+    "Sail Number": "1",
+    "Bow Number": "2",
+    "Boat Name": "Apollo 11",
+    "Skipper": "Neil",
+    "Crew 1": "Buzz",
+    "Crew 2": "Michael",
+    "Crew 3": "",
+    "Crew 4": "Martian",
+    "New Crew": "",
+    "": ""
   }
 ]
