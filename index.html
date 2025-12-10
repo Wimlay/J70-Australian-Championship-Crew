@@ -15,7 +15,7 @@
     }
 
     header {
-      background: linear-gradient(90deg, #00068b, #00335b);
+      background-color: #0a1a33;
       padding: 20px;
       text-align: center;
       color: white;
@@ -50,7 +50,7 @@
     }
 
     th {
-      background-color: #00335b;
+      background-color: #123b7a;
       color: white;
       cursor: pointer;
     }
@@ -147,15 +147,16 @@ function populateTable(data) {
       .sort((a,b) => parseInt(a.replace(/\D/g,"")) - parseInt(b.replace(/\D/g,"")));
 
     const crewTd = document.createElement("td");
-crewFields.map(k => boat[k])
-          .filter(Boolean)
-          .forEach(name => {
-              const div = document.createElement("div");
-              div.textContent = name;
-              crewTd.appendChild(div);
-          });
-tr.appendChild(crewTd);
+    crewFields.map(k => boat[k])
+              .filter(Boolean)
+              .forEach(name => {
+                const div = document.createElement("div");
+                div.textContent = name;
+                crewTd.appendChild(div);
+              });
+    tr.appendChild(crewTd);
 
+    tbody.appendChild(tr);
   });
 }
 
