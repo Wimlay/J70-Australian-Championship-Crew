@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
   <title>J70 Australian Championships Boat & Crew List</title>
 
   <style>
@@ -57,9 +58,15 @@
       border: 1px solid #ccc;
     }
 
-    table {
+    /* Table wrapper for horizontal scroll */
+    .table-wrapper {
       width: 90%;
       margin: 0 auto 40px auto;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
       border-collapse: collapse;
       background-color: white;
       box-shadow: 0 2px 6px rgba(0,0,0,0.15);
@@ -89,7 +96,7 @@
     tr:nth-child(even) { background-color: #eef2f7; }
 
     @media (max-width: 600px) {
-      table { width: 100%; font-size: 14px; min-width: 0; }
+      table { font-size: 14px; }
       th, td { padding: 8px; }
       .search-container { text-align: center; }
     }
@@ -111,19 +118,22 @@
   <input type="text" id="searchBox" placeholder="Search boats or crew..." />
 </div>
 
-<table id="boatTable">
-  <thead>
-    <tr>
-      <th>Club</th>
-      <th>Sail Number</th>
-      <th>Bow Number</th>
-      <th>Boat Name</th>
-      <th>Skipper</th>
-      <th>Crew</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+<!-- Table wrapper for scroll -->
+<div class="table-wrapper">
+  <table id="boatTable">
+    <thead>
+      <tr>
+        <th>Club</th>
+        <th>Sail Number</th>
+        <th>Bow Number</th>
+        <th>Boat Name</th>
+        <th>Skipper</th>
+        <th>Crew</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
 
 <script>
 const SHEET_ID = "1T3aZEkERIw8-vStNG9sKv1ybT0WJ2gkixx41Ga_8Iks";
@@ -142,7 +152,7 @@ async function loadBoatsFromGoogleSheet() {
     const headers = rows.shift().map(h => h.trim());
 
     boatsData = rows
-      .filter(r => r.length > 1) // skip empty rows
+      .filter(r => r.length > 1)
       .map(row => {
         let obj = {};
         row.forEach((cell,i) => obj[headers[i]] = cell.trim());
